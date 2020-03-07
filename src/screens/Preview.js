@@ -1,26 +1,43 @@
 import React from 'react';
 import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Button, Block, Text, Input, theme, Card } from 'galio-framework';
-
+import HeaderButtons from '../components/HeaderButtons';
 import materialTheme from "../constants/Theme";
 const { width } = Dimensions.get('screen');
 
 export default class Preview extends React.Component {
-  renderItems = () => {
+  constructor(props){
+    super(props);
+    this.handler = this.handler.bind(this);
+    this.state = {
+      imageURI: "",
+      navigation: null
+    }
+  }
+  handler(stateName, stateVal) {
+    this.setState({
+      [stateName]: stateVal
+    });
+  }
+  componentDidMount() {
     let {navigation, route} = this.props;
-    let imageURI = route.params.img;
-    console.log(imageURI);
+    this.setState({imageURI: route.params.img});
+    this.setState({navigation: navigation})
+  }
+
+  renderItems = () => {
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.products}>
+          <HeaderButtons handler={this.handler}/>
         <Block flex>
           <Card
               flex
               style={styles.card}
               imageBlockStyle={{ padding: theme.SIZES.BASE / 2 }}
-              image= {imageURI}
-              //"https://images.unsplash.com/photo-1497802176320-541c8e8de98d?&w=1600&h=900&fit=crop&crop=entropy&q=300"
+              image= {this.state.imageURI}
+              imageStyle={styles.img}
           />
           <Button
               shadowless
@@ -32,7 +49,7 @@ export default class Preview extends React.Component {
         </Block>
       </ScrollView>
     )
-  }
+  };
 
   render() {
     return (
@@ -46,6 +63,9 @@ export default class Preview extends React.Component {
 const styles = StyleSheet.create({
   home: {
     width: width,
+  },
+  img:{
+    height:"100%"
   },
   search: {
     height: 48,
@@ -93,7 +113,7 @@ const styles = StyleSheet.create({
   },
   card:{
     backgroundColor: "white",
-    height:230,
+    height:400,
   },
   button:{
     alignSelf:"center",
