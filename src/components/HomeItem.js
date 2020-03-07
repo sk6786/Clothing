@@ -38,7 +38,7 @@ class HomeItem extends React.Component {
     return (
       <Block row={horizontal} card flex style={[styles.product, styles.shadow, style]}>
         <TouchableWithoutFeedback onPress={
-          ()=>this.processClick(product.title, url, product, navigation).then((uri)=>navigation.navigate(url, { product: product, img: uri}))
+          ()=>this.processClick(product.title, url, product, navigation).then((uri)=>uri!==""?navigation.navigate(url, { product: product, img: uri}):null)
           //open the camera roll or upload
           }>
           <Block flex style={[styles.imageContainer, styles.shadow]}>
