@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { Button, Block, Text, Input, theme, Card } from 'galio-framework';
+import { StyleSheet, Dimensions, ScrollView,Alert,ActivityIndicator} from 'react-native';
+import { Button, Block, Text, Input, theme, Card  } from 'galio-framework';
 import HeaderButtons from '../components/HeaderButtons';
 import materialTheme from "../constants/Theme";
 const { width } = Dimensions.get('screen');
@@ -11,13 +11,55 @@ export default class Preview extends React.Component {
     this.handler = this.handler.bind(this);
     this.state = {
       imageURI: "",
-      navigation: null
+      navigation: null,
+      data:"",
+      loading:false,
     }
   }
   handler(stateName, stateVal) {
     this.setState({
       [stateName]: stateVal
     });
+  }
+  
+  onProcessClick = () => {
+ 
+  
+
+    Alert.alert(
+      'Process Image',
+      'We will start processing the image',
+      [
+        {text: 'Ok', onPress: () =>{
+
+            // show loading
+        this.setState({loading: true});
+        this.setState({data: ""});
+
+          console.log('API call to anayisis image');
+  
+
+          //TODO: replace setTimeout method with Ajax call and reponse for call should be saved in data
+          setTimeout(() => {
+            // Remove loading when API call finish and show results
+          this.setState({loading: false});
+          this.setState({data: "Results\nMain color(s):Red,Black\nAccent color(s):While,Gray"});
+ 
+          }, 3000);
+          
+        
+        }  
+      
+        },
+        {text: 'Cancel', onPress: () => console.log('Call cancel')},
+      ],
+      {cancelable: false},
+    );
+
+       
+ 
+    
+
   }
   componentDidMount() {
     let {navigation, route} = this.props;
@@ -43,10 +85,20 @@ export default class Preview extends React.Component {
               shadowless
               style={styles.button}
               color={materialTheme.COLORS.BUTTON_COLOR}
-              onPress={() => navigation.navigate('Pro')}>
+              onPress={this.onProcessClick}>
               PROCESS
           </Button>
+       
+         
+           {/*
+            Check the status of the 'loading' variable. If true, then display
+            the loading spinner. Otherwise, display the results.
+          */}
+           {this.state.loading ?<ActivityIndicator size="large" color="#0000ff" />:<Text>{this.state.data} </Text>} 
+       
+         
         </Block>
+          
       </ScrollView>
     )
   };
@@ -118,6 +170,7 @@ const styles = StyleSheet.create({
   button:{
     alignSelf:"center",
     width: 380,
-    marginTop: 10
+    marginTop: 10,
+    marginBottom:30
   }
 });
