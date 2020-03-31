@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, Dimensions, ScrollView, Alert, ActivityIndicator,View } from 'react-native';
 import { Button, Block, Text, Input, theme, Card } from 'galio-framework';
 import HeaderButtons from '../components/HeaderButtons';
 import materialTheme from "../constants/Theme";
@@ -12,7 +12,7 @@ export default class Preview extends React.Component {
   state = {
     imageURI: "",
     navigation: null,
-    data: "",
+    data: [],
     loading: false,
   }
   constructor(props) {
@@ -32,8 +32,8 @@ export default class Preview extends React.Component {
 
     // show loading
     this.setState({ loading: true });
-    this.setState({ data: "" });
-
+    this.setState({ data: [] });
+    let uploadUrl="";
     try {
       uploadUrl = await uploadImageAsync(this.state.imageURI);
     } catch (e) {
@@ -53,7 +53,7 @@ export default class Preview extends React.Component {
               }
             },
             features: [
-              { type: "IMAGE_PROPERTIES", maxResults: 3 }
+              { type: "IMAGE_PROPERTIES", maxResults: 5 }
             ]
           }
         ]
@@ -79,9 +79,9 @@ export default class Preview extends React.Component {
           percent: "%",
             name: "name"
       }*/
-      //TODO: Turn color into prettyness for UI
+      let sortedColors = color.sort((a, b) => a.percent < b.percent)
       this.setState({
-        data: "it worked hype",
+        data: sortedColors,
         loading: false
       });
     } catch (error) {
@@ -107,7 +107,18 @@ export default class Preview extends React.Component {
     this.setState({ navigation: navigation })
   }
 
+renderColor(colorInfo){
+
+  return(
+    <View style={{ backgroundColor:"rgb("+colorInfo.color.red+","+ colorInfo.color.green+","+ colorInfo.color.blue+")", width: 50, height: 50,borderRadius: 50/2, marginHorizontal:10, marginVertical: 10}} >
+     <Text style={{paddingLeft:10, paddingTop:15, color:"#F5F5F5"}}>{""+parseInt(colorInfo.percent)+"%"}</Text>
+    </View>
+  );
+}
+
+
   renderItems = () => {
+
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -134,7 +145,8 @@ export default class Preview extends React.Component {
             Check the status of the 'loading' variable. If true, then display
             the loading spinner. Otherwise, display the results.
           */}
-          {this.state.loading ? <ActivityIndicator size="large" color="#0000ff" /> : <Text>{this.state.data} </Text>}
+            {this.state.loading ? <ActivityIndicator size="large" color="#0000ff" /> : <View style={styles.viewContainer} >{this.state.data.map(colorInfo => this.renderColor(colorInfo))}</View> }
+
 
 
         </Block>
@@ -236,5 +248,11 @@ const styles = StyleSheet.create({
     width: 380,
     marginTop: 10,
     marginBottom: 30
-  }
+  },
+    viewContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
 });
