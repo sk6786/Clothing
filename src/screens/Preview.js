@@ -1,12 +1,14 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView, Alert, ActivityIndicator,View } from 'react-native';
+import { StyleSheet, Dimensions, ScrollView, Alert, ActivityIndicator, View } from 'react-native';
 import { Button, Block, Text, Input, theme, Card } from 'galio-framework';
 import HeaderButtons from '../components/HeaderButtons';
 import materialTheme from "../constants/Theme";
 //import uuid from 'react-native-uuid-generator';
 import Environment from '../../config/environment';
 import firebase from '../../config/firebase'
+import allColors from '../helper/AllColors.js'
 const { width } = Dimensions.get('screen');
+var convert = require('color-convert');
 
 export default class Preview extends React.Component {
   state = {
@@ -33,7 +35,7 @@ export default class Preview extends React.Component {
     // show loading
     this.setState({ loading: true });
     this.setState({ data: [] });
-    let uploadUrl="";
+    let uploadUrl = "";
     try {
       uploadUrl = await uploadImageAsync(this.state.imageURI);
     } catch (e) {
@@ -72,7 +74,8 @@ export default class Preview extends React.Component {
       );
       let responseJson = await response.json();
       let color = responseJson.responses[0].imagePropertiesAnnotation.dominantColors.colors;
-      this.decorateColors(color)
+      this.addColorPercent(color)
+      this.addColorName(color)
       console.log(color)
       /*{
         hexCode: "aaaaaa",
@@ -90,7 +93,7 @@ export default class Preview extends React.Component {
     }
   }
 
-  decorateColors(colors) {
+  addColorPercent(colors) {
     var scoresSum = colors.reduce(function (sum, color) {
       return sum + color.pixelFraction;
     }, 0) / 100;
@@ -101,20 +104,28 @@ export default class Preview extends React.Component {
     });
   }
 
+  addColorName(colors) {
+    return colors.map(function (color) {
+      var colorCombined = convert.rgb.keyword(color.color.red, color.color.green, color.color.blue)
+      color.colorName = allColors[colorCombined];
+      return color
+    });
+  }
+
   componentDidMount() {
     let { navigation, route } = this.props;
     this.setState({ imageURI: route.params.img });
     this.setState({ navigation: navigation })
   }
 
-renderColor(colorInfo){
+  renderColor(colorInfo) {
 
-  return(
-    <View style={{ backgroundColor:"rgb("+colorInfo.color.red+","+ colorInfo.color.green+","+ colorInfo.color.blue+")", width: 50, height: 50,borderRadius: 50/2, marginHorizontal:10, marginVertical: 10}} >
-     <Text style={{paddingLeft:10, paddingTop:15, color:"#F5F5F5"}}>{""+parseInt(colorInfo.percent)+"%"}</Text>
-    </View>
-  );
-}
+    return (
+      <View style={{ backgroundColor: "rgb(" + colorInfo.color.red + "," + colorInfo.color.green + "," + colorInfo.color.blue + ")", width: 50, height: 50, borderRadius: 50 / 2, justifyContent: 'center', alignItems: 'center', margin: 5 }} >
+        <Text style={{ textAlign: 'center', color: "#F5F5F5" }}>{"" + parseInt(colorInfo.percent) + "%"}</Text>
+      </View>
+    );
+  }
 
 
   renderItems = () => {
@@ -145,7 +156,7 @@ renderColor(colorInfo){
             Check the status of the 'loading' variable. If true, then display
             the loading spinner. Otherwise, display the results.
           */}
-            {this.state.loading ? <ActivityIndicator size="large" color="#0000ff" /> : <View style={styles.viewContainer} >{this.state.data.map(colorInfo => this.renderColor(colorInfo))}</View> }
+          {this.state.loading ? <ActivityIndicator size="large" color="#0000ff" /> : <View style={styles.viewContainer} >{this.state.data.map(colorInfo => this.renderColor(colorInfo))}</View>}
 
 
 
@@ -249,10 +260,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 30
   },
-    viewContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    }
+  viewContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });
