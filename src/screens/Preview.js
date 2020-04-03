@@ -3,7 +3,6 @@ import { StyleSheet, Dimensions, ScrollView, Alert, ActivityIndicator, View } fr
 import { Button, Block, Text, Input, theme, Card } from 'galio-framework';
 import HeaderButtons from '../components/HeaderButtons';
 import materialTheme from "../constants/Theme";
-//import uuid from 'react-native-uuid-generator';
 import Environment from '../../config/environment';
 import firebase from '../../config/firebase'
 import allColors from '../helper/AllColors.js'
@@ -76,12 +75,6 @@ export default class Preview extends React.Component {
       let color = responseJson.responses[0].imagePropertiesAnnotation.dominantColors.colors;
       this.addColorPercent(color)
       this.addColorName(color)
-      console.log(color)
-      /*{
-        hexCode: "aaaaaa",
-          percent: "%",
-            name: "name"
-      }*/
       let sortedColors = color.sort((a, b) => a.percent < b.percent)
       this.setState({
         data: sortedColors,
@@ -190,8 +183,7 @@ async function uploadImageAsync(uri) {
     xhr.send(null);
   });
 
-  //uuidString = await uuid.getRandomUUID();
-  const ref = firebase.storage().ref().child("testingApiKey");//uuidString);//await uuid.getRandomUUID());    //TODO: Find a good uuid thing that doesn't freak tf out when I use it
+  const ref = firebase.storage().ref().child(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
   const snapshot = await ref.put(blob);
 
   blob.close();
