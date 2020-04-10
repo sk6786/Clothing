@@ -3,7 +3,6 @@ import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Button, Block, Text, Input, theme } from 'galio-framework';
 import upload from "../assets/images/upload.png";
 import capture from "../assets/images/camera.png";
-import history from "../assets/images/history.png";
 
 const { width } = Dimensions.get('screen');
 import HomeItem from '../components/HomeItem';
@@ -11,7 +10,7 @@ import HomeItem from '../components/HomeItem';
 class Home extends React.Component {
 
   renderItems = () => {
-    const HomeItems =  [
+    const HomeItems = [
       {
         title: 'Upload',
         image: upload,
@@ -19,11 +18,7 @@ class Home extends React.Component {
       {
         title: 'Capture',
         image: capture,
-      },
-      {
-        title: 'History',
-        image: history,
-      },
+      }
     ];
     return (
       <ScrollView
@@ -32,7 +27,6 @@ class Home extends React.Component {
         <Block flex>
           <HomeItem product={HomeItems[0]} full />
           <HomeItem product={HomeItems[1]} full />
-          <HomeItem product={HomeItems[2]} full />
         </Block>
       </ScrollView>
     )

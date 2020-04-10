@@ -2,21 +2,17 @@ import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
 import { StyleSheet, Dimensions, Image, TouchableWithoutFeedback } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
-import {takePicture,selectPicture} from "../helper/PhotoCaptureUpload";
+import { takePicture, selectPicture } from "../helper/PhotoCaptureUpload";
 
 class HomeItem extends React.Component {
 
-  processClick(title, url, product, navigation){
+  processClick(title, url, product, navigation) {
     switch (title) {
       case "Capture":
         return takePicture();
       case "Upload":
         return selectPicture();
-      case "History":
-        return "";
-
     }
-
   }
 
   render() {
@@ -30,17 +26,14 @@ class HomeItem extends React.Component {
       case "Upload":
         url = "Preview";
         break;
-      case "History":
-        url = "History"
-
     }
 
     return (
       <Block row={horizontal} card flex style={[styles.product, styles.shadow, style]}>
         <TouchableWithoutFeedback onPress={
-          ()=>this.processClick(product.title, url, product, navigation).then((uri)=>uri!==""?navigation.navigate(url, { product: product, img: uri}):null)
+          () => this.processClick(product.title, url, product, navigation).then((uri) => uri !== "" ? navigation.navigate(url, { product: product, img: uri }) : null)
           //open the camera roll or upload
-          }>
+        }>
           <Block flex style={[styles.imageContainer, styles.shadow]}>
             <Image source={product.image} style={imageStyles} />
           </Block>
@@ -63,14 +56,14 @@ const styles = StyleSheet.create({
     marginVertical: theme.SIZES.BASE,
     borderWidth: 0,
     minHeight: 114,
-    marginBottom:30,
-    paddingTop:10
+    marginBottom: 30,
+    paddingTop: 10
   },
   productTitle: {
-    textAlign:'center',
+    textAlign: 'center',
     flex: 1,
     flexWrap: 'wrap',
-    fontSize:20,
+    fontSize: 20,
     paddingBottom: 6,
   },
   productDescription: {
@@ -88,7 +81,7 @@ const styles = StyleSheet.create({
     width: 'auto',
   },
   fullImage: {
-    alignSelf:'center',
+    alignSelf: 'center',
     height: 150,
     width: 150,
   },
