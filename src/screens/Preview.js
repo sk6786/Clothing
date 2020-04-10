@@ -75,6 +75,7 @@ export default class Preview extends React.Component {
       let color = responseJson.responses[0].imagePropertiesAnnotation.dominantColors.colors;
       this.addColorPercent(color)
       this.addColorName(color)
+      this.addColorLightOrDark(color)
       let sortedColors = color.sort((a, b) => a.percent < b.percent)
       this.setState({
         data: sortedColors,
@@ -105,6 +106,24 @@ export default class Preview extends React.Component {
     });
   }
 
+  addColorLightOrDark(colors) {
+    return colors.map(function (color) {
+      hsp = Math.sqrt(
+        0.299 * (color.color.red * color.color.red) +
+        0.587 * (color.color.green * color.color.green) +
+        0.114 * (color.color.blue * color.color.blue)
+      );
+      if (hsp <= 127.5) {
+        color.textColor = "white"
+      }
+      else {
+        color.textColor = "black"
+      }
+      console.log(hsp)
+      return color
+    });
+  }
+
   componentDidMount() {
     let { navigation, route } = this.props;
     this.setState({ imageURI: route.params.img });
@@ -115,8 +134,8 @@ export default class Preview extends React.Component {
 
     return (
       <View>
-        <View style={{ borderColor: "black", borderWidth: 2, backgroundColor: "rgb(" + colorInfo.color.red + "," + colorInfo.color.green + "," + colorInfo.color.blue + ")", width: 60, height: 60, borderRadius: 60 / 2, justifyContent: 'center', alignItems: 'center', margin: 5 }} >
-          <Text style={{ textAlign: 'center', color: "#F5F5F5" }}>{"" + parseInt(colorInfo.percent) + "%"}</Text>
+        <View style={{ backgroundColor: "rgb(" + colorInfo.color.red + "," + colorInfo.color.green + "," + colorInfo.color.blue + ")", width: 60, height: 60, borderRadius: 60 / 2, justifyContent: 'center', alignItems: 'center', margin: 5 }} >
+          <Text style={{ textAlign: 'center', color: colorInfo.textColor }}>{"" + parseInt(colorInfo.percent) + "%"}</Text>
         </View>
         <Text style={{ textAlign: 'center', paddingTop: 10, color: "black", width: 60, height: 100, marginHorizontal: 5 }}>{colorInfo.colorName}</Text>
       </View>
@@ -153,8 +172,6 @@ export default class Preview extends React.Component {
             the loading spinner. Otherwise, display the results.
           */}
           {this.state.loading ? <ActivityIndicator size="large" color="#0000ff" /> : <View style={styles.viewContainer} >{this.state.data.map(colorInfo => this.renderColor(colorInfo))}</View>}
-
-
 
         </Block>
 
