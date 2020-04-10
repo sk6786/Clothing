@@ -114,9 +114,12 @@ export default class Preview extends React.Component {
   renderColor(colorInfo) {
 
     return (
-      <View style={{ backgroundColor: "rgb(" + colorInfo.color.red + "," + colorInfo.color.green + "," + colorInfo.color.blue + ")", width: 50, height: 50, borderRadius: 50 / 2, justifyContent: 'center', alignItems: 'center', margin: 5 }} >
-        <Text style={{ textAlign: 'center', color: "#F5F5F5" }}>{"" + parseInt(colorInfo.percent) + "%"}</Text>
-      </View>
+        <View>
+          <View style={{  backgroundColor: "rgb(" + colorInfo.color.red + "," + colorInfo.color.green + "," + colorInfo.color.blue + ")", width: 50, height: 50, borderRadius: 50 / 2, justifyContent: 'center', alignItems: 'center', margin: 5 }} >
+            <Text style={{ textAlign: 'center', color: "#F5F5F5" }}>{"" + parseInt(colorInfo.percent) + "%"}</Text>
+          </View>
+          <Text style={{ textAlign: 'center',paddingTop:20, color: "black", width:50, height:100 }}>{ colorInfo.colorName }</Text>
+       </View>
     );
   }
 
